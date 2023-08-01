@@ -53,7 +53,7 @@ class generate {
                 $html = $this->converter->convert($content)->getContent();
 
                 $this->generateBlogPost($baseName, $html);
-                $this->addUrlToSitemap('blogposts/' . $baseName . '.html');
+                $this->addUrlToSitemap('/blogposts/' . $baseName . '.html');
 
                 if(!file_exists('../docs/blogposts/images/' . $baseName . '.jpg')) {
                     $imageBaseUrl = 'https://source.unsplash.com/random/185x185/?code,programming';
