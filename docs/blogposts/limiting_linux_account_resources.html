@@ -116,7 +116,7 @@ You can check this by trying to find a <code>v2</code> mount:</p>
 <p>Why does limiting disk i/o not work with <code>cgroups v1</code>?<br />
 It does work, but only with direct writes.
 The reason for this, is that each group is separated in <code>v1</code>.
-This means that the disk group does not know anything about the memory and cpu groups.
+This means that the disk group does not know anything about the others.
 Enter buffers and cache:
 Disk writes have to pass several layers of cache and buffers.
 These layers are controlled by BLKIO and RAM.
