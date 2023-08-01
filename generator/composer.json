@@ -1,0 +1,15 @@
+{
+    "name": "toonvd/site-generator",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Toon Van Dooren",
+            "email": "toon_vd@live.com"
+        }
+    ],
+    "require": {
+        "league/commonmark": "^2.4"
+    },
+    "description": "My blog",
+    "license": "mit"
+}
