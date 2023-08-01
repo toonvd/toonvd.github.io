@@ -52,7 +52,7 @@ systemd.unified_cgroup_hierarchy=1
 Why does limiting disk i/o not work with `cgroups v1`?\
 It does work, but only with direct writes.
 The reason for this, is that each group is separated in `v1`.
-This means that the disk group does not know anything about the memory and cpu groups.
+This means that the disk group does not know anything about the others.
 Enter buffers and cache:
 Disk writes have to pass several layers of cache and buffers.
 These layers are controlled by BLKIO and RAM.
