@@ -5,20 +5,46 @@ require_once 'vendor/autoload.php';
 //filectime
 
 use League\CommonMark\CommonMarkConverter;
+use Icamys\SitemapGenerator\SitemapGenerator;
+use League\CommonMark\Exception\CommonMarkException;
 
+/**
+ *
+ */
 class generate {
-    private $blogPosts = [];
+    /**
+     * @var array
+     */
+    private array $blogPosts = [];
 
-    private $converter;
+    /**
+     * @var CommonMarkConverter
+     */
+    private CommonMarkConverter $converter;
 
+    /**
+     * @var SitemapGenerator
+     */
+    private SitemapGenerator $sitemapGenerator;
+
+    /**
+     *
+     */
     public function __construct()
     {
         $this->converter = new CommonMarkConverter([
             'allow_unsafe_links' => false,
         ]);
+
+        $this->sitemapGenerator = new SitemapGenerator('https://toonvd.github.io', '../docs');
     }
 
-    public function start() {
+    /**
+     * @return void
+     * @throws CommonMarkException
+     */
+    public function start(): void
+    {
         // gather all files and parse contents
         $files = glob('blogposts/*.md');
         foreach($files as $file) {
@@ -27,7 +53,7 @@ class generate {
                 $html = $this->converter->convert($content)->getContent();
 
                 $this->generateBlogPost($baseName, $html);
-
+                $this->addUrlToSitemap('blogposts/' . $baseName . '.html');
 
                 if(!file_exists('../docs/blogposts/images/' . $baseName . '.jpg')) {
                     $imageBaseUrl = 'https://source.unsplash.com/random/185x185/?code,programming';
@@ -44,9 +70,19 @@ class generate {
         }
 
         $this->generateIndex($this->blogPosts);
+        $this->sitemapGenerator->flush();
+        $this->sitemapGenerator->finalize();
+        $this->sitemapGenerator->updateRobots();
+        $this->sitemapGenerator->submitSitemap();
     }
 
-    private function generateBlogPost($baseName, $html) {
+    /**
+     * @param string $baseName
+     * @param string $html
+     * @return void
+     */
+    private function generateBlogPost(string $baseName, string $html): void
+    {
         $html = preg_replace('/^.+\n/', '', $html);
         $title = ucfirst(str_replace('_', ' ', $baseName));
         $blogPostSkeleton = file_get_contents('layout/blogpost.html');
@@ -54,12 +90,30 @@ class generate {
         file_put_contents('../docs/blogposts/' . $baseName . '.html', $finalContents);
     }
 
-    private function generateIndex($blogPosts) {
+    /**
+     * @param array $blogPosts
+     * @return void
+     */
+    private function generateIndex(array $blogPosts): void
+    {
         $indexSkeleton = file_get_contents('layout/index.html');
         $finalContents = str_replace('{{data}}', addslashes(json_encode($blogPosts)), $indexSkeleton);
         file_put_contents('../docs/index.html', $finalContents);
     }
+
+    /**
+     * @param string $url
+     * @return void
+     */
+    private function addUrlToSitemap(string $url): void
+    {
+        $this->sitemapGenerator->addURL($url, new DateTime(), 'always', 0.5);
+    }
 }
 
 $generate = new generate;
-$generate->start();
+try {
+    $generate->start();
+} catch (CommonMarkException $e) {
+    die($e->getMessage());
+}
