@@ -8,7 +8,8 @@
         }
     ],
     "require": {
-        "league/commonmark": "^2.4"
+        "league/commonmark": "^2.4",
+        "icamys/php-sitemap-generator": "^4.6"
     },
     "description": "My blog",
     "license": "mit"
