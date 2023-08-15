@@ -4,7 +4,7 @@ Sometimes it is hard to find out why your hit rate is low.
 This post describes some options to help you on your way.
 
 ### Step 1: check varnishstat
-- Check `varnishstat` for the bans counter if the average is high, proceed to step 5.\
+- Check `varnishstat` for the bans counter if the average is high, proceed to step 5.
 - Check `varnishstat` for nuked objects, if the amount is high, you probably have insufficient allocated memory.
 This means that you either assigned to little, or cache very inefficiently. Use common sense to determine which one it is, your available memory is not infinite. 
 
@@ -23,8 +23,7 @@ This is the first thing to look for.
 ### Step 4: check hashes
 When patterns are found, you can often find variable hashes.
 These hashes are caused by headers or url param that are not stripped.
-The Magento VCL has specific rules to strip marketing params, you can add found params there.
-https://github.com/mage-os/mageos-magento2/blob/631315d7243593023330cfa93b9710f0422b2e68/app/code/Magento/PageCache/etc/varnish6.vcl#L100
+The <a href="https://github.com/mage-os/mageos-magento2/blob/631315d7243593023330cfa93b9710f0422b2e68/app/code/Magento/PageCache/etc/varnish6.vcl#L100">Magento VCL</a> has specific rules to strip marketing params, you can add found params there.
 
 ### Step 5: log flushes
 If to many flushes happen, you should start by logging the flushes.
