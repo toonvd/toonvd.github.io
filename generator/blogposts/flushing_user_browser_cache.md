@@ -32,4 +32,4 @@ Beware, this header is not yet processed by <a href="https://caniuse.com/?search
 This header also clears localstorage, make sure you don't use it on a link that your new theme uses!
 
 ### Step 4: try to find a JS file
-It is possible to put in a drop in replacement for this JS file containing the JS in step 2.
+It is possible to put in a drop in replacement for this JS file containing the JS in step 1.
