@@ -47,6 +47,7 @@ class generate {
     {
         // gather all files and parse contents
         $files = glob('blogposts/*.md');
+        $this->addUrlToSitemap('/');
         foreach($files as $file) {
             if($content = file_get_contents($file)) {
                 $baseName = basename($file, '.md');
