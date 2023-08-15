@@ -194,3 +194,7 @@ h4 {
     width: 100%;
     background-color: white;
 }
+
+@font-face {
+    font-display: swap;
+}
