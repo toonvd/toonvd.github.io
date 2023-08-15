@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--generator-class="Icamys\SitemapGenerator\SitemapGenerator"-->
 <!--generator-version="4.6.0"-->
-<!--generated-on="2023-08-01T22:05:18+00:00"-->
+<!--generated-on="2023-08-15T18:17:26+00:00"-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
+  <loc>https://toonvd.github.io/blogposts/debugging_Varnish_low_hit_ratio.html</loc>
+  <lastmod>2023-08-15T18:17:26+00:00</lastmod>
+  <changefreq>always</changefreq>
+  <priority>0.5</priority>
+ </url>
+ <url>
   <loc>https://toonvd.github.io/blogposts/flushing_user_browser_cache.html</loc>
-  <lastmod>2023-08-01T22:05:18+00:00</lastmod>
+  <lastmod>2023-08-15T18:17:29+00:00</lastmod>
   <changefreq>always</changefreq>
   <priority>0.5</priority>
  </url>
  <url>
   <loc>https://toonvd.github.io/blogposts/hardening_ssh_sessions.html</loc>
-  <lastmod>2023-08-01T22:05:18+00:00</lastmod>
+  <lastmod>2023-08-15T18:17:29+00:00</lastmod>
   <changefreq>always</changefreq>
   <priority>0.5</priority>
  </url>
  <url>
   <loc>https://toonvd.github.io/blogposts/limiting_linux_account_resources.html</loc>
-  <lastmod>2023-08-01T22:05:18+00:00</lastmod>
+  <lastmod>2023-08-15T18:17:29+00:00</lastmod>
   <changefreq>always</changefreq>
   <priority>0.5</priority>
  </url>

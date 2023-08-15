@@ -4,28 +4,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
     <title>Not another dev blog</title>
-    <link rel="shortcut icon" href="images/favicon.png">
-    <meta name="description" content="A blog about linux, php and performance">
+    <link rel="shortcut icon" href="../images/favicon.png">
+    <meta name="description" content="Debugging Varnish low hit ratio">
     <meta name="author" content="Toon Van Dooren">
-    <meta name="google-site-verification" content="o-5Dek7AGztyxh4YxdTvFt3JBXWlO4FVivkOshgsYKQ" />
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/clusterize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
-<body class="home">
+<body>
 <header>
     <nav class="top-nav vhalign-wrapper">
         <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i
                 class="material-icons">menu</i></a>
-        <h1 class="hide-on-med-and-down">Overview</h1>
+        <h1 class="hide-on-med-and-down">Debugging Varnish low hit ratio</h1>
     </nav>
     <ul id="nav-mobile" class="sidenav sidenav-fixed">
         <li class="vhalign-wrapper profile-pic-wrapper">
-            <a href="/"><img class="circle profile-pic" src="images/profile.jpeg"></a>
+            <a href="../"><img class="circle profile-pic" src="../images/profile.jpeg"></a>
         </li>
         <li class="vhalign-wrapper"><span class="profile-text">
             Hi, my name is Toon Van Dooren.<br/>
@@ -72,40 +70,46 @@
     </ul>
 </header>
 <main>
-    <div id="scrollArea" class="clusterize-scroll container">
-            <h1 class="hide-on-large-only">Overview</h1>
-            <div class="input-field col s12">
-                <input id="filter" type="text">
-                <label for="filter">filter</label>
-            </div>
-        <div id="contentArea" class="clusterize-content section blog-list">
+    <div class="container">
+        <h1 class="hide-on-large-only">Debugging Varnish low hit ratio</h1>
+        <div class="section blog-list">
+            <p>When using full page cache, you want to have your hit ratio as high as possible.
+Sometimes it is hard to find out why your hit rate is low.
+This post describes some options to help you on your way.</p>
+<h3>Step 1: check varnishstat</h3>
+<ul>
+<li>Check <code>varnishstat</code> for the bans counter if the average is high, proceed to step 5.\</li>
+<li>Check <code>varnishstat</code> for nuked objects, if the amount is high, you probably have insufficient allocated memory.
+This means that you either assigned to little, or cache very inefficiently. Use common sense to determine which one it is, your available memory is not infinite.</li>
+</ul>
+<h3>Step 2: logging</h3>
+<p>The first thing I usually start with, is logging misses to a file.<br />
+An ideal moment to do this, is after your site is warmed by a cache warmer and on a peak moment.</p>
+<pre><code class="language-bash">varnishlog -q &quot;VCL_call eq MISS&quot; &gt; misses.log
+</code></pre>
+<h3>Step 3: finding patterns</h3>
+<p>You can often find patterns in these misses.
+For example specific types of product or category pages in Magento.<br />
+This is the first thing to look for.</p>
+<h3>Step 4: check hashes</h3>
+<p>When patterns are found, you can often find variable hashes.
+These hashes are caused by headers or url param that are not stripped.
+The Magento VCL has specific rules to strip marketing params, you can add found params there.
+https://github.com/mage-os/mageos-magento2/blob/631315d7243593023330cfa93b9710f0422b2e68/app/code/Magento/PageCache/etc/varnish6.vcl#L100</p>
+<h3>Step 5: log flushes</h3>
+<p>If to many flushes happen, you should start by logging the flushes.
+After logging them, you can optimize code.</p>
+<pre><code class="language-bash">varnishlog -g request -q 'ReqMethod eq &quot;PURGE&quot;' &gt; purges.log
+</code></pre>
+
         </div>
     </div>
 </main>
 
 
-<script src="js/materialize.js"></script>
-<script src="js/highlight.min.js"></script>
-<script src="js/clusterize.min.js"></script>
-<script src="js/init.js"></script>
-<script>
-    (function () {
-        let data = JSON.parse('[\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/debugging_Varnish_low_hit_ratio.jpg\\\" alt=\\\"debugging_Varnish_low_hit_ratio\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Debugging a low Varnish hit ratio<\\/h2>\\n<p>When using full page cache, you want to have your hit ratio as high as possible.\\nSometimes it is hard to find out why your hit rate is low.\\nThis post describes some options to help you on your way.<\\/p><a href=\\\"blogposts\\/debugging_Varnish_low_hit_ratio.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/flushing_user_browser_cache.jpg\\\" alt=\\\"flushing_user_browser_cache\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Flushing user browser cache<\\/h2>\\n<p>The other day, I received an emergency call from a customer.\\nThis customer switched from a PWA to a regular theme but there were still workers and files in browser cache.<\\/p><a href=\\\"blogposts\\/flushing_user_browser_cache.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/hardening_ssh_sessions.jpg\\\" alt=\\\"hardening_ssh_sessions\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Hardening ssh sessions<\\/h2>\\n<p>Depending on the situation, it might be needed to limit what a specific ssh key can do.<br \\/>\\nPossible wishes can be locking IP, preventing port forwarding and even lock possible commands. All of this, can be done using <code>authorized_keys<\\/code>.<\\/p><a href=\\\"blogposts\\/hardening_ssh_sessions.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/limiting_linux_account_resources.jpg\\\" alt=\\\"limiting_linux_account_resources\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Limiting linux account resources<\\/h2>\\n<p>For shared servers running Ubuntu, I was tasked to find a way to lock in resource usage specific user accounts.\\nAfter a bit of research, I ended up taking a look at <code>control groups<\\/code> aka <code>cgroups<\\/code>.<\\/p><a href=\\\"blogposts\\/limiting_linux_account_resources.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\"]');
-        let filteredData = [];
-        let filter = document.getElementById('filter');
-        let clusterize = new Clusterize({
-            rows: data,
-            scrollId: 'scrollArea',
-            contentId: 'contentArea'
-        });
+<script src="../js/materialize.js"></script>
+<script src="../js/highlight.min.js"></script>
+<script src="../js/init.js"></script>
 
-        filter.oninput = function () {
-            filteredData = data.filter(function (v) {
-                return v.toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
-            });
-            clusterize.update(filteredData);
-        }
-    }())
-</script>
 </body>
 </html>
