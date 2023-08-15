@@ -72,9 +72,9 @@
     </ul>
 </header>
 <main>
-    <div id="scrollArea" class="clusterize-scroll container">
+    <div class="container">
             <h1 class="hide-on-large-only">Overview</h1>
-            <div class="input-field col s12">
+            <div class="input-field col s12 search">
                 <input id="filter" type="text">
                 <label for="filter">filter</label>
             </div>
@@ -95,8 +95,18 @@
         let filter = document.getElementById('filter');
         let clusterize = new Clusterize({
             rows: data,
-            scrollId: 'scrollArea',
-            contentId: 'contentArea'
+            contentId: 'contentArea',
+            scroll_top_getter: function () {
+                return window.scrollY;
+            },
+            scroll_top_setter: function (amt) {
+                window.scrollTo({
+                    top: amt,
+                    left: 0,
+                    behavior: "smooth",
+                });
+            },
+            scrollElem: window
         });
 
         filter.oninput = function () {

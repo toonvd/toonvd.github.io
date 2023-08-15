@@ -55,7 +55,6 @@ nav.top-nav h1{
 a.sidenav-trigger.top-nav {
     position: absolute;
     height: 48px;
-    top: 3vh;
     float: none;
     margin-left: 0;
     color: #292929;
@@ -151,10 +150,6 @@ code {
     word-wrap: break-word;
 }
 
-nav {
-    max-height: 19vh;
-}
-
 h1 {
     font-size: 3rem;
 }
@@ -176,7 +171,7 @@ h4 {
 }
 
 .clusterize-scroll{
-    max-height: 80vh;
+    max-height: none;
 }
 
 .input-field input[type=text]:focus + label {
@@ -191,4 +186,11 @@ h4 {
 .input-field {
     margin-top:1.5rem;
     padding: 0 0.75rem;
+}
+
+.search {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    background-color: white;
 }
