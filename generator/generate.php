@@ -11,7 +11,8 @@ use League\CommonMark\Exception\CommonMarkException;
 /**
  *
  */
-class generate {
+class generate
+{
     /**
      * @var array
      */
@@ -48,20 +49,22 @@ class generate {
         // gather all files and parse contents
         $files = glob('blogposts/*.md');
         $this->addUrlToSitemap('/');
-        foreach($files as $file) {
-            if($content = file_get_contents($file)) {
+        foreach ($files as $file) {
+            if ($content = file_get_contents($file)) {
                 $baseName = basename($file, '.md');
                 $html = $this->converter->convert($content)->getContent();
 
-                $this->generateBlogPost($baseName, $html);
                 $this->addUrlToSitemap('/blogposts/' . $baseName . '.html');
 
-                if(!file_exists('../docs/blogposts/images/' . $baseName . '.jpg')) {
+                if (!file_exists('../docs/blogposts/images/' . $baseName . '.jpg')) {
                     $imageBaseUrl = 'https://source.unsplash.com/random/185x185/?code,programming';
                     $imageHeaders = @get_headers($imageBaseUrl, 1);
                     $image = file_get_contents($imageHeaders['Location']);
                     file_put_contents('../docs/blogposts/images/' . $baseName . '.jpg', $image);
                 }
+
+                $this->generateBlogPost($baseName, $html);
+
                 // get title + first paragraph for blogposts array
                 preg_match('/^(.*?<\/p>)/ms', $html, $matches);
                 $this->blogPosts[] = '<div class="row"><div class="col s3">
@@ -87,7 +90,14 @@ class generate {
         $html = preg_replace('/^.+\n/', '', $html);
         $title = ucfirst(str_replace('_', ' ', $baseName));
         $blogPostSkeleton = file_get_contents('layout/blogpost.html');
-        $finalContents = str_replace(['{{contents}}', '{{title}}'], [$html, $title], $blogPostSkeleton);
+        $finalContents = str_replace(['{{contents}}', '{{title}}', '{{image}}', '{{url}}'],
+            [
+                $html,
+                $title,
+                'https://toonvd.github.io/blogposts/images/' . $baseName . '.jpg',
+                'https://toonvd.github.io/blogposts/' . $baseName . '.html'
+            ],
+            $blogPostSkeleton);
         file_put_contents('../docs/blogposts/' . $baseName . '.html', $finalContents);
     }
 
