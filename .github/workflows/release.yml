@@ -9,8 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Checkout mdblog
-        run: git clone https://github.com/toonvd/mdblog.git
-        working-directory: ../mdblog
+        run: git clone https://github.com/toonvd/mdblog.git ../mdblog
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
