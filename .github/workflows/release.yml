@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Checkout mdblog
+        run: git clone https://github.com/toonvd/mdblog.git ../mdblog
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -15,13 +17,19 @@ jobs:
           tools: composer
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
-        working-directory: generator
-      - name: composer install
+        working-directory: ../mdblog
+      - name: Composer install
         run: composer install --prefer-dist --no-progress
-        working-directory: generator
-      - name: build static content
-        run: php generate.php
-        working-directory: generator
+        working-directory: ../mdblog
+      - name: Build blog pages
+        run: >
+          php application generate:blog 
+          --source=${GITHUB_WORKSPACE}/.blogposts/
+          --target=${GITHUB_WORKSPACE}/
+          --base_url=https://toonvd.github.io
+          --image_path=${GITHUB_WORKSPACE}/images/
+          --template_path=${GITHUB_WORKSPACE}/.templates/
+        working-directory: ../mdblog
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: New release

@@ -3,33 +3,32 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5.0"/>
-    <meta property="og:title" content="Not another dev blog" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://toonvd.github.io/" />
-    <meta property="og:image" content="https://toonvd.github.io/images/profile.jpeg" />
-    <title>Not another dev blog</title>
-    <link rel="shortcut icon" href="images/favicon.png">
-    <meta name="description" content="A blog about linux, php and performance">
+    <title>Limiting linux account resources</title>
+    <link rel="shortcut icon" href="../images/favicon.png">
+    <meta property="og:title" content="Limiting linux account resources"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://toonvd.github.io/limiting_linux_account_resources.html"/>
+    <meta property="og:image" content="https://toonvd.github.io/images/limiting_linux_account_resources.jpg"/>
+    <meta name="description" content="Limiting linux account resources">
     <meta name="author" content="Toon Van Dooren">
-    <meta name="google-site-verification" content="o-5Dek7AGztyxh4YxdTvFt3JBXWlO4FVivkOshgsYKQ"/>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/clusterize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
-<body class="home">
+<body>
 <header>
     <nav class="top-nav vhalign-wrapper">
         <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i
                 class="material-icons">menu</i></a>
-        <h1 class="hide-on-med-and-down">Overview</h1>
+        <h1 class="hide-on-med-and-down">Limiting linux account resources</h1>
     </nav>
     <ul id="nav-mobile" class="sidenav sidenav-fixed">
         <li class="vhalign-wrapper profile-pic-wrapper">
-            <a aria-label="Profile picture" href="/"><img class="circle profile-pic" src="images/profile.jpeg"></a>
+            <a aria-label="Profile picture" href="../"><img class="circle profile-pic" alt="profile"
+                                                            src="../images/profile.jpeg"></a>
         </li>
         <li class="vhalign-wrapper"><span class="profile-text">
             Hi, my name is Toon Van Dooren.<br/>
@@ -80,49 +79,65 @@
 </header>
 <main>
     <div class="container">
-        <h1 class="hide-on-large-only">Overview</h1>
-        <div class="input-field col s12 search">
-            <input id="filter" type="text">
-            <label for="filter">filter</label>
-        </div>
-        <div id="contentArea" class="clusterize-content section blog-list">
+        <h1 class="hide-on-large-only">Limiting linux account resources</h1>
+        <div class="section blog-list">
+            <h2>Limiting linux account resources</h2>
+<p>For shared servers running Ubuntu, I was tasked to find a way to lock in resource usage specific user accounts.
+After a bit of research, I ended up taking a look at <code>control groups</code> aka <code>cgroups</code>.</p>
+<p>Control groups collect information from the kernel and allow us to take action based on this information.
+Using <code>subtree control</code>, we can configure what should be collected.<br />
+Example:</p>
+<pre><code class="language-bash">cat /sys/fs/cgroup/cgroup.subtree_control
+io memory pids
+</code></pre>
+<p>To limit memory for example, we can write to a file called <code>memory.max</code>.<br />
+Example:</p>
+<pre><code class="language-bash">cat /sys/fs/cgroup/user.slice/user-1001.slice/memory.max
+max
+</code></pre>
+<h4>Making it simple</h4>
+<p>Since Ubuntu comes with <code>systemd</code>, and <code>systemd</code> has builtin <code>cgroups</code> management, I decided to take a closer look.
+As you know, in a <code>systemd</code> based system, every user runs in its own slice.
+We will take advantage of this to limit its resources.</p>
+<p>First, we will create a file for the user ID we want to limit.</p>
+<pre><code class="language-bash">vim /etc/systemd/system/user-${UUID}.slice.d/limit-user.conf
+</code></pre>
+<p>In this file, we will decide what to limit. In this example, we will limit the memory.</p>
+<pre><code class="language-bash">[Slice]
+MemoryAccounting=yes
+MemoryMax=2048M
+</code></pre>
+<p><code>MemoryAccounting</code> makes sure collection of memory data starts.
+<code>MemoryMax</code> limits the memory.
+After adding the file, don't forget to restart the user slice (and the user from <code>Ubuntu 20.04</code> and up).</p>
+<h3>Pitfalls</h3>
+<h4>MemoryMax</h4>
+<p>Reaching <code>MemoryMax</code>, will cause your system to start swapping.
+If your system has swap enabled, please limit the swap also using <code>MemorySwapMax</code>.</p>
+<h3>Limiting disk i/o does not seem to work</h3>
+<p>In this case, you are probably using <code>cgroups v1</code>.
+You can check this by trying to find a <code>v2</code> mount:</p>
+<pre><code class="language-bash">findmnt --noheadings -t cgroup2
+</code></pre>
+<p>If the result is negative, you can enable <code>unified cgroups</code> (aka <code>cgroups v2</code>) by adding the following to your grub config:</p>
+<pre><code class="language-bash">systemd.unified_cgroup_hierarchy=1
+</code></pre>
+<p>Why does limiting disk i/o not work with <code>cgroups v1</code>?<br />
+It does work, but only with direct writes.
+The reason for this, is that each group is separated in <code>v1</code>.
+This means that the disk group does not know anything about the others.
+Enter buffers and cache:
+Disk writes have to pass several layers of cache and buffers.
+These layers are controlled by BLKIO and RAM.
+Since <code>cgroups v1</code> separates these, it is impossible to measure i/o on these layers.</p>
+
         </div>
     </div>
 </main>
 
 
-<script defer src="js/materialize.js"></script>
-<script defer src="js/highlight.min.js"></script>
-<script defer src="js/clusterize.min.js"></script>
-<script defer src="js/init.js"></script>
-<script defer>
-    window.addEventListener('DOMContentLoaded', function() {
-        let data = JSON.parse('[\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/debugging_Varnish_low_hit_ratio.jpg\\\" alt=\\\"debugging_Varnish_low_hit_ratio\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Debugging a low Varnish hit ratio<\\/h2>\\n<p>When using full page cache, you want to have your hit ratio as high as possible.\\nSometimes it is hard to find out why your hit rate is low.\\nThis post describes some options to help you on your way.<\\/p><a href=\\\"blogposts\\/debugging_Varnish_low_hit_ratio.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/flushing_user_browser_cache.jpg\\\" alt=\\\"flushing_user_browser_cache\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Flushing user browser cache<\\/h2>\\n<p>The other day, I received an emergency call from a customer.\\nThis customer switched from a PWA to a regular theme but there were still workers and files in browser cache.<\\/p><a href=\\\"blogposts\\/flushing_user_browser_cache.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/hardening_ssh_sessions.jpg\\\" alt=\\\"hardening_ssh_sessions\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Hardening ssh sessions<\\/h2>\\n<p>Depending on the situation, it might be needed to limit what a specific ssh key can do.<br \\/>\\nPossible wishes can be locking IP, preventing port forwarding and even lock possible commands. All of this, can be done using <code>authorized_keys<\\/code>.<\\/p><a href=\\\"blogposts\\/hardening_ssh_sessions.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/limiting_linux_account_resources.jpg\\\" alt=\\\"limiting_linux_account_resources\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Limiting linux account resources<\\/h2>\\n<p>For shared servers running Ubuntu, I was tasked to find a way to lock in resource usage specific user accounts.\\nAfter a bit of research, I ended up taking a look at <code>control groups<\\/code> aka <code>cgroups<\\/code>.<\\/p><a href=\\\"blogposts\\/limiting_linux_account_resources.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\"]');
-        let filteredData = [];
-        let filter = document.getElementById('filter');
-        let clusterize = new Clusterize({
-            rows: data,
-            contentId: 'contentArea',
-            scroll_top_getter: function () {
-                return window.scrollY;
-            },
-            scroll_top_setter: function (amt) {
-                window.scrollTo({
-                    top: amt,
-                    left: 0,
-                    behavior: "smooth",
-                });
-            },
-            scrollElem: window
-        });
-
-        filter.oninput = function () {
-            filteredData = data.filter(function (v) {
-                return v.toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
-            });
-            clusterize.update(filteredData);
-        }
-    });
-</script>
+<script src="../js/materialize.js"></script>
+<script src="../js/highlight.min.js"></script>
+<script src="../js/init.js"></script>
 </body>
 </html>
