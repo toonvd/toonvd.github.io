@@ -3,33 +3,32 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5.0"/>
-    <meta property="og:title" content="Not another dev blog" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://toonvd.github.io/" />
-    <meta property="og:image" content="https://toonvd.github.io/images/profile.jpeg" />
-    <title>Not another dev blog</title>
-    <link rel="shortcut icon" href="images/favicon.png">
-    <meta name="description" content="A blog about linux, php and performance">
+    <title>{{title}}</title>
+    <link rel="shortcut icon" href="../images/favicon.png">
+    <meta property="og:title" content="{{title}}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{url}}"/>
+    <meta property="og:image" content="{{image}}"/>
+    <meta name="description" content="{{title}}">
     <meta name="author" content="Toon Van Dooren">
-    <meta name="google-site-verification" content="o-5Dek7AGztyxh4YxdTvFt3JBXWlO4FVivkOshgsYKQ"/>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/clusterize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/highlight.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/monokai-sublime.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
-<body class="home">
+<body>
 <header>
     <nav class="top-nav vhalign-wrapper">
         <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i
                 class="material-icons">menu</i></a>
-        <h1 class="hide-on-med-and-down">Overview</h1>
+        <h1 class="hide-on-med-and-down">{{title}}</h1>
     </nav>
     <ul id="nav-mobile" class="sidenav sidenav-fixed">
         <li class="vhalign-wrapper profile-pic-wrapper">
-            <a aria-label="Profile picture" href="/"><img class="circle profile-pic" src="images/profile.jpeg"></a>
+            <a aria-label="Profile picture" href="../"><img class="circle profile-pic" alt="profile"
+                                                            src="../images/profile.jpeg"></a>
         </li>
         <li class="vhalign-wrapper"><span class="profile-text">
             Hi, my name is Toon Van Dooren.<br/>
@@ -80,49 +79,16 @@
 </header>
 <main>
     <div class="container">
-        <h1 class="hide-on-large-only">Overview</h1>
-        <div class="input-field col s12 search">
-            <input id="filter" type="text">
-            <label for="filter">filter</label>
-        </div>
-        <div id="contentArea" class="clusterize-content section blog-list">
+        <h1 class="hide-on-large-only">{{title}}</h1>
+        <div class="section blog-list">
+            {{html}}
         </div>
     </div>
 </main>
 
 
-<script defer src="js/materialize.js"></script>
-<script defer src="js/highlight.min.js"></script>
-<script defer src="js/clusterize.min.js"></script>
-<script defer src="js/init.js"></script>
-<script defer>
-    window.addEventListener('DOMContentLoaded', function() {
-        let data = JSON.parse('[\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/debugging_Varnish_low_hit_ratio.jpg\\\" alt=\\\"debugging_Varnish_low_hit_ratio\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Debugging a low Varnish hit ratio<\\/h2>\\n<p>When using full page cache, you want to have your hit ratio as high as possible.\\nSometimes it is hard to find out why your hit rate is low.\\nThis post describes some options to help you on your way.<\\/p><a href=\\\"blogposts\\/debugging_Varnish_low_hit_ratio.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/flushing_user_browser_cache.jpg\\\" alt=\\\"flushing_user_browser_cache\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Flushing user browser cache<\\/h2>\\n<p>The other day, I received an emergency call from a customer.\\nThis customer switched from a PWA to a regular theme but there were still workers and files in browser cache.<\\/p><a href=\\\"blogposts\\/flushing_user_browser_cache.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/hardening_ssh_sessions.jpg\\\" alt=\\\"hardening_ssh_sessions\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Hardening ssh sessions<\\/h2>\\n<p>Depending on the situation, it might be needed to limit what a specific ssh key can do.<br \\/>\\nPossible wishes can be locking IP, preventing port forwarding and even lock possible commands. All of this, can be done using <code>authorized_keys<\\/code>.<\\/p><a href=\\\"blogposts\\/hardening_ssh_sessions.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\",\"<div class=\\\"row\\\"><div class=\\\"col s3\\\">\\n\\t\\t\\t\\t\\t        <img src=\\\"blogposts\\/images\\/limiting_linux_account_resources.jpg\\\" alt=\\\"limiting_linux_account_resources\\\">\\n\\t\\t\\t\\t\\t    <\\/div><div class=\\\"col s9\\\"><h2>Limiting linux account resources<\\/h2>\\n<p>For shared servers running Ubuntu, I was tasked to find a way to lock in resource usage specific user accounts.\\nAfter a bit of research, I ended up taking a look at <code>control groups<\\/code> aka <code>cgroups<\\/code>.<\\/p><a href=\\\"blogposts\\/limiting_linux_account_resources.html\\\">Read more \\u2192<\\/a><\\/div><\\/div>\"]');
-        let filteredData = [];
-        let filter = document.getElementById('filter');
-        let clusterize = new Clusterize({
-            rows: data,
-            contentId: 'contentArea',
-            scroll_top_getter: function () {
-                return window.scrollY;
-            },
-            scroll_top_setter: function (amt) {
-                window.scrollTo({
-                    top: amt,
-                    left: 0,
-                    behavior: "smooth",
-                });
-            },
-            scrollElem: window
-        });
-
-        filter.oninput = function () {
-            filteredData = data.filter(function (v) {
-                return v.toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
-            });
-            clusterize.update(filteredData);
-        }
-    });
-</script>
+<script src="../js/materialize.js"></script>
+<script src="../js/highlight.min.js"></script>
+<script src="../js/init.js"></script>
 </body>
 </html>

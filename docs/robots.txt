@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://toonvd.github.io/sitemap.xml

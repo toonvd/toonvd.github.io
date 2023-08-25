@@ -3,10 +3,10 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5.0"/>
-    <meta property="og:title" content="Not another dev blog" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://toonvd.github.io/" />
-    <meta property="og:image" content="https://toonvd.github.io/images/profile.jpeg" />
+    <meta property="og:title" content="Not another dev blog"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://toonvd.github.io/"/>
+    <meta property="og:image" content="https://toonvd.github.io/images/profile.jpeg"/>
     <title>Not another dev blog</title>
     <link rel="shortcut icon" href="images/favicon.png">
     <meta name="description" content="A blog about linux, php and performance">
@@ -97,7 +97,7 @@
 <script defer src="js/init.js"></script>
 <script defer>
     window.addEventListener('DOMContentLoaded', function() {
-        let data = JSON.parse('{{data}}');
+        let data = JSON.parse('{{blogList}}');
         let filteredData = [];
         let filter = document.getElementById('filter');
         let clusterize = new Clusterize({
@@ -110,7 +110,7 @@
                 window.scrollTo({
                     top: amt,
                     left: 0,
-                    behavior: "smooth",
+                    behavior: 'smooth',
                 });
             },
             scrollElem: window
